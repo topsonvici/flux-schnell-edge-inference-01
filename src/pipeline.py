@@ -1,4 +1,4 @@
-from diffusers import FluxPipeline, AutoencoderKL
+from diffusers import FluxPipeline, AutoencoderKL, AutoencoderTiny
 from diffusers.image_processor import VaeImageProcessor
 from transformers import T5EncoderModel, T5TokenizerFast, CLIPTokenizer, CLIPTextModel
 import torch
@@ -84,11 +84,12 @@ def infer_latents(prompt_embeds, pooled_prompt_embeds, width: int | None, height
         output_type="latent",
     ).images
 
-vae = AutoencoderKL.from_pretrained(
-    CHECKPOINT,
-    subfolder="vae",
-    torch_dtype=torch.bfloat16,
-).to("cuda")
+# vae = AutoencoderKL.from_pretrained(
+#     CHECKPOINT,
+#     subfolder="vae",
+#     torch_dtype=torch.bfloat16,
+# ).to("cuda")
+vae = AutoencoderTiny.from_pretrained("madebyollin/taef1", torch_dtype=torch.bfloat16).to("cuda")
 vae_scale_factor = 2 ** (len(vae.config.block_out_channels))
 image_processor = VaeImageProcessor(vae_scale_factor=vae_scale_factor)
 
